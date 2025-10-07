@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crush Mo Ba Ako?</title>
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #ffb6c1, #ff69b4);
+    text-align: center;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  h1 {
+    margin-top: 60px;
+    font-size: 2em;
+    color: #fff;
+  }
+
+  button {
+    padding: 10px 20px;
+    font-size: 18px;
+    margin: 10px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  #yesBtn {
+    background-color: #ff69b4;
+    color: white;
+    position: relative;
+    z-index: 999; /* stays on top */
+  }
+
+  .noBtn {
+    background-color: #ff4c4c;
+    color: white;
+    position: absolute;
+    z-index: 100;
+  }
+
+  img.randomPic {
+    width: 150px;
+    border-radius: 15px;
+    position: absolute;
+    display: none;
+    z-index: 50;
+  }
+
+  /* YES PAGE */
+  #yesPage {
+    display: none;
+    margin-top: 50px;
+    color: white;
+  }
+
+  #yesPic {
+    width: 250px;
+    border-radius: 20px;
+    display: none;
+    margin-bottom: 10px;
+  }
+
+  #yesText {
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+
+  audio {
+    margin-top: 15px;
+  }
+</style>
+</head>
+<body>
+
+<!-- MAIN PAGE -->
+<div id="mainPage">
+  <h1>Crush mo ba ako?</h1>
+  <button id="yesBtn">Yes 💖</button>
+  <button class="noBtn" id="noBtn">No 😅</button>
+
+  <!-- Pictures appear after NO clicks -->
+  <img id="pic1" class="randomPic" src="image.jpg">
+  <img id="pic2" class="randomPic" src="image1.jpg">
+  <img id="pic3" class="randomPic" src="image2.jpg">
+  <img id="pic4" class="randomPic" src="image3.jpg">
+</div>
+
+<!-- YES PAGE -->
+<div id="yesPage">
+  <img id="yesPic" src="kerby.jpg" alt="Sweet Picture">
+  <p id="yesText">Pwede bang...</p>
+  <audio id="music" controls autoplay>
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
+</div>
+
+<script>
+let noClickCount = 0;
+const mainPage = document.getElementById('mainPage');
+const yesPage = document.getElementById('yesPage');
+const music = document.getElementById('music');
+const yesPic = document.getElementById('yesPic');
+const yesBtn = document.getElementById('yesBtn');
+const noBtn = document.getElementById('noBtn');
+const pics = [
+  document.getElementById('pic1'),
+  document.getElementById('pic2'),
+  document.getElementById('pic3'),
+  document.getElementById('pic4')
+];
+
+// Move NO button randomly
+function moveButton(btn) {
+  const x = Math.random() * (window.innerWidth - 100);
+  const y = Math.random() * (window.innerHeight - 150);
+  btn.style.left = `${x}px`;
+  btn.style.top = `${y}px`;
+}
+
+// Show scattered pictures (won’t cover Yes)
+function showRandomPic(pic) {
+  pic.style.display = 'block';
+  let x, y;
+  do {
+    x = Math.random() * (window.innerWidth - 200);
+    y = Math.random() * (window.innerHeight - 200);
+  } while (y < 300 && x > window.innerWidth / 2 - 100 && x < window.innerWidth / 2 + 100);
+  pic.style.left = `${x}px`;
+  pic.style.top = `${y}px`;
+}
+
+// NO button logic
+noBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  noClickCount++;
+  moveButton(noBtn);
+
+  if (noClickCount === 3) showRandomPic(pics[0]);
+  else if (noClickCount === 4) showRandomPic(pics[1]);
+  else if (noClickCount === 5) showRandomPic(pics[2]);
+  else if (noClickCount === 6) {
+    showRandomPic(pics[3]);
+    // Create more "No" buttons
+    for (let i = 0; i < 10; i++) {
+      const extraNo = document.createElement('button');
+      extraNo.innerText = "No 😅";
+      extraNo.classList.add('noBtn');
+      document.body.appendChild(extraNo);
+      moveButton(extraNo);
+      extraNo.addEventListener('click', () => moveButton(extraNo));
+    }
+  }
+});
+
+// YES button logic
+yesBtn.addEventListener('click', () => {
+  document.querySelectorAll('.noBtn').forEach(btn => btn.remove());
+  mainPage.style.display = 'none';
+  yesPage.style.display = 'block';
+  document.body.style.background = "linear-gradient(135deg, #ff9aa2, #ffb6c1)";
+  music.play();
+});
+
+// Show the picture only while the music is playing
+music.addEventListener('play', () => {
+  yesPic.style.display = 'inline';
+});
+music.addEventListener('pause', () => {
+  yesPic.style.display = 'none';
+});
+</script>
+
+</body>
+</html>
